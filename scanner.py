@@ -35,7 +35,7 @@ def scan(image):
             return result.data.decode('ascii')
 
 def publish(upc):
-    print "*** publish " + upc
+    print("*** publish " + upc)
 
 def main():
     # set up GPIO output channel
