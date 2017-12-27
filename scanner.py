@@ -9,6 +9,7 @@ import numpy as np
 
 tmpdir = '/tmp/picam'
 
+
 def scan(image):
     image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
@@ -16,7 +17,7 @@ def scan(image):
     print('count of results: ' + str(len(results)))
     for result in results:
         if result.type == 'UPC-A':
-            print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
+            print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality)
 
 
 def main():
