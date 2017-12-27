@@ -1,9 +1,9 @@
 import cv2
 import zbar.misc
+import sys
 
-file = './test.jpeg'
+file = sys.argv[1]
 
-#image = mpimage.imread('/Users/wesleybornor/Desktop/UPC-A.png')
 image = cv2.imread(file)
 print(type(image))
 if len(image.shape) == 3:
@@ -11,6 +11,5 @@ if len(image.shape) == 3:
 scanner = zbar.Scanner()
 results = scanner.scan(image)
 for result in results:
-    print(result)
     if result.type == 'UPC-A':
-        print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')))
+        print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality)
