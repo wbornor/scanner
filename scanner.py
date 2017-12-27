@@ -10,8 +10,8 @@ import numpy as np
 tmpdir = '/tmp/picam'
 
 def scan(file):
-    #image = cv2.imread(file)
-    image = np.array(Image.open(file).getdata())
+    print('scanning ' + out)
+    image = np.array(Image.open(file).getdata(), np.uint8)
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
@@ -31,7 +31,6 @@ if len(sys.argv) >= 2:
         print(file)
         scan(file)
 else:
-
     camera = PiCamera()
     camera.resolution = (1024, 768)
     camera.start_preview()
@@ -42,4 +41,3 @@ else:
         out = tmpdir + '/picam.' + sha256 + '.jpg'
         camera.capture(out)
         scan(out)
-        sleep(1)
