@@ -41,6 +41,7 @@ def main():
         while True:
             sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
             out = tmpdir + '/picam.' + sha256 + '.jpg'
+            print('capturing...')
             camera.capture(out)
             scan(out)
 
