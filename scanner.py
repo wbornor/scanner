@@ -16,10 +16,10 @@ def scan(file):
     print('prepping ' + file)
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
-    	print('grayscale ' + file)
+        print('grayscale ' + file)
     scanner = zbar.Scanner()
     results = scanner.scan(image)
-print('count of results: ' + len(results))
+    print('count of results: ' + str(len(results)))
     for result in results:
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
