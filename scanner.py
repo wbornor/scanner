@@ -20,24 +20,27 @@ def scan(file):
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
 
+def main():
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
 
-if not os.path.exists(tmpdir):
-    os.makedirs(tmpdir)
+    if len(sys.argv) >= 2:
+        for file in sys.argv:
+            if "scanner.py" in file:
+                continue
+            print(file)
+            scan(file)
+    else:
+        camera = PiCamera()
+        camera.resolution = (1024, 768)
+        camera.start_preview()
+        # Camera warm-up time
+        sleep(2)
+        while True:
+            sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
+            out = tmpdir + '/picam.' + sha256 + '.jpg'
+            camera.capture(out)
+            scan(out)
 
-if len(sys.argv) >= 2:
-    for file in sys.argv:
-        if "scanner.py" in file:
-            continue
-        print(file)
-        scan(file)
-else:
-    camera = PiCamera()
-    camera.resolution = (1024, 768)
-    camera.start_preview()
-    # Camera warm-up time
-    sleep(2)
-    while True:
-        sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
-        out = tmpdir + '/picam.' + sha256 + '.jpg'
-        camera.capture(out)
-        scan(out)
+if __name__ == '__main__':
+    main()
