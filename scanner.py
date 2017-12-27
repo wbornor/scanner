@@ -1,6 +1,5 @@
-import cv2
 import zbar.misc
-import sys
+import sys, os
 import hashlib
 from time import sleep
 from datetime import datetime
@@ -8,6 +7,7 @@ from picamera import PiCamera
 from PIL import Image
 import numpy as np
 
+tmpdir = '/tmp/picam'
 
 def scan(file):
     #image = cv2.imread(file)
@@ -20,6 +20,9 @@ def scan(file):
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
 
+
+if not os.path.exists(tmpdir):
+    os.makedirs(tmpdir)
 
 if len(sys.argv) >= 2:
     for file in sys.argv:
@@ -36,7 +39,7 @@ else:
     sleep(2)
     while True:
         sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
-        out = '/tmp/picam/picam.' + sha256 + '.jpg'
+        out = tmpdir + '/picam.' + sha256 + '.jpg'
         camera.capture(out)
         scan(out)
         sleep(1)
