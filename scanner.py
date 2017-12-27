@@ -5,10 +5,13 @@ import hashlib
 from time import sleep
 from datetime import datetime
 from picamera import PiCamera
+from PIL import Image
+import numpy as np
 
 
 def scan(file):
-    image = cv2.imread(file)
+    #image = cv2.imread(file)
+    image = np.array(Image.open(file).getdata())
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()

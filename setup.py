@@ -9,9 +9,9 @@ setup(name='scanner',
       packages=[],
       install_requires=[
             'numpy',
-            'SimpleCV',
+            'Pillow',
             'PiCamera',
             'zbar-py'
       ],
-      dependency_links=['https://github.com/sightmachine/SimpleCV'],
+      dependency_links=[],
       zip_safe=False)
