@@ -8,9 +8,9 @@ if len(sys.argv) < 2:
 for file in sys.argv:
     if "scanner.py" in file:
         continue
+    print file
 
     image = cv2.imread(file)
-    print(type(image))
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
