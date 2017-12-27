@@ -25,7 +25,7 @@ if len(sys.argv) >= 2:
     for file in sys.argv:
         if "scanner.py" in file:
             continue
-        print file
+        print(file)
         scan(file)
 else:
 
