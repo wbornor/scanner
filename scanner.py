@@ -67,7 +67,7 @@ def main():
             camera.capture(stream, format='rgb', resize=(320,240))
             upc = scan(stream)
             if upc is not None:
-                if codes.has_key(upc):
+                if upc in codes:
                     #subtract the time, if more than n seconds since last seen, act again
                     now = datetime.now()
                     then = codes[upc]
