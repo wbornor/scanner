@@ -8,7 +8,7 @@ import RPi.GPIO as GPIO
 from PIL import Image
 import numpy as np
 
-tmpdir = '/tmp/picam'
+__last_seen_seconds__ = 30
 
 
 def ledon():
@@ -25,27 +25,23 @@ def scan(image):
     image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
     results = scanner.scan(image)
-    print('count of results: ' + str(len(results)))
     if(len(results) == 0):
         ledoff()
+        return None
     for result in results:
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality)
             ledon()
+            return result.data.decode('ascii')
 
+def publish(upc):
+    print "*** publish " + upc
 
 def main():
-    GPIO.setmode(GPIO.BCM)
     # set up GPIO output channel
+    GPIO.setmode(GPIO.BCM)
     GPIO.setup(16, GPIO.OUT)
-
-
-
-    # Off
-    GPIO.output(16, GPIO.HIGH)
-
-    if not os.path.exists(tmpdir):
-        os.makedirs(tmpdir)
+    codes = {}
 
     if len(sys.argv) >= 2:
         for file in sys.argv:
@@ -66,12 +62,20 @@ def main():
         # Camera warm-up time
         sleep(2)
         while True:
-            sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
-            #out = tmpdir + '/picam.' + sha256 + '.jpg'
-            print('capturing...')
+            #sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
             stream = np.empty((240, 320, 3), dtype=np.uint8)
             camera.capture(stream, format='rgb', resize=(320,240))
-            scan(stream)
+            upc = scan(stream)
+            if upc is not None:
+                if codes.has_key(upc):
+                    #subtract the time, if more than n seconds since last seen, act again
+                    now = datetime.now()
+                    then = codes[upc]
+                    if (now - then).total_seconds() >= __last_seen_seconds__:
+                        publish(upc)
+                else:
+                    codes[upc] = datetime.now()
+                    publish(upc)
 
 
 if __name__ == '__main__':
