@@ -10,13 +10,16 @@ import numpy as np
 tmpdir = '/tmp/picam'
 
 def scan(file):
-    print('scanning ' + file)
     imagefile = Image.open(file)
+    print('opening ' + file)
     image = np.array(imagefile.getdata(), np.uint8).reshape(imagefile.size[1], imagefile.size[0], 3)
+    print('prepping ' + file)
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
+    	print('grayscale ' + file)
     scanner = zbar.Scanner()
     results = scanner.scan(image)
+print('count of results: ' + len(results))
     for result in results:
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
