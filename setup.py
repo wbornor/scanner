@@ -12,7 +12,8 @@ setup(name='scanner',
           'Pillow',
           'PiCamera',
           'zbar-py',
-          'RPi.GPIO'
+          'RPi.GPIO',
+          'boto3'
       ],
       dependency_links=[],
       zip_safe=False)

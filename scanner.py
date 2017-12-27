@@ -7,8 +7,10 @@ from picamera import PiCamera
 import RPi.GPIO as GPIO
 from PIL import Image
 import numpy as np
+import boto3
 
 __last_seen_seconds__ = 30
+__sns_topic_arn__ = 'arn:aws:sns:us-east-1:796019718156:upc-capture'
 
 
 def ledon():
@@ -25,7 +27,7 @@ def scan(image):
     image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
     results = scanner.scan(image)
-    if(len(results) == 0):
+    if len(results) == 0:
         ledoff()
         return None
     for result in results:
@@ -34,8 +36,17 @@ def scan(image):
             ledon()
             return result.data.decode('ascii')
 
+
 def publish(upc):
     print("*** publish " + upc)
+    client = boto3.Session(profile_name='default').client('sns')
+
+    response = client.publish(
+        TopicArn=__sns_topic_arn__,
+        Message=upc,
+        Subject='upc-capture'
+    )
+
 
 def main():
     # set up GPIO output channel
