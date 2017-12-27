@@ -12,12 +12,15 @@ tmpdir = '/tmp/picam'
 
 def scan(file):
     imagefile = Image.open(file)
-    print('opening ' + file)
-    image = np.array(imagefile.getdata(), np.uint8).reshape(imagefile.size[1], imagefile.size[0], 3)
-    print('prepping ' + file)
+    print('opening file')
+    data = imagefile.getdata()
+    print('building numpy array')
+    image = np.array(data, np.uint8)
+    print('reshaping ')
+    image = image.reshape(imagefile.size[1], imagefile.size[0], 3)
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
-        print('grayscale ' + file)
+        print('grayscale')
     scanner = zbar.Scanner()
     results = scanner.scan(image)
     print('count of results: ' + str(len(results)))
@@ -46,7 +49,7 @@ def main():
             #out = tmpdir + '/picam.' + sha256 + '.jpg'
             print('capturing...')
             stream = BytesIO()
-            camera.capture(stream, format='jpeg')
+            camera.capture(stream, format='jpeg', resize=(320,240))
             stream.seek(0)
             scan(stream)
 
