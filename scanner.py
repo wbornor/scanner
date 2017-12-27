@@ -72,6 +72,7 @@ def main():
                     now = datetime.now()
                     then = codes[upc]
                     if (now - then).total_seconds() >= __last_seen_seconds__:
+                        codes[upc] = datetime.now()
                         publish(upc)
                 else:
                     codes[upc] = datetime.now()
