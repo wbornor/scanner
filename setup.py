@@ -8,10 +8,11 @@ setup(name='scanner',
       author_email='wbornor+github@gmail.com',
       packages=[],
       install_requires=[
-            'numpy',
-            'Pillow',
-            'PiCamera',
-            'zbar-py'
+          'numpy',
+          'Pillow',
+          'PiCamera',
+          'zbar-py',
+          'RPi.GPIO'
       ],
       dependency_links=[],
       zip_safe=False)

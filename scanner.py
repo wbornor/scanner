@@ -4,10 +4,21 @@ import hashlib
 from time import sleep
 from datetime import datetime
 from picamera import PiCamera
+import RPi.GPIO as GPIO
 from PIL import Image
 import numpy as np
 
 tmpdir = '/tmp/picam'
+
+
+def ledon():
+    # On
+    GPIO.output(16, GPIO.LOW)
+
+
+def ledoff():
+    # On
+    GPIO.output(16, GPIO.HIGH)
 
 
 def scan(image):
@@ -15,12 +26,24 @@ def scan(image):
     scanner = zbar.Scanner()
     results = scanner.scan(image)
     print('count of results: ' + str(len(results)))
+    if(len(results) == 0):
+        ledoff()
     for result in results:
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality)
+            ledon()
 
 
 def main():
+    GPIO.setmode(GPIO.BCM)
+    # set up GPIO output channel
+    GPIO.setup(16, GPIO.OUT)
+
+
+
+    # Off
+    GPIO.output(16, GPIO.HIGH)
+
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
 
