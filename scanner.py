@@ -10,8 +10,9 @@ import numpy as np
 tmpdir = '/tmp/picam'
 
 def scan(file):
-    print('scanning ' + out)
-    image = np.array(Image.open(file).getdata(), np.uint8)
+    print('scanning ' + file)
+    imagefile = Image.open(file)
+    image = np.array(imagefile.getdata(), np.uint8).reshape(imagefile.size[1], imagefile.size[0], 3)
     if len(image.shape) == 3:
         image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
@@ -19,6 +20,7 @@ def scan(file):
     for result in results:
         if result.type == 'UPC-A':
             print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality, file)
+
 
 def main():
     if not os.path.exists(tmpdir):
@@ -41,6 +43,7 @@ def main():
             out = tmpdir + '/picam.' + sha256 + '.jpg'
             camera.capture(out)
             scan(out)
+
 
 if __name__ == '__main__':
     main()
