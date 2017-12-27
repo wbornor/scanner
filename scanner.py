@@ -2,6 +2,7 @@ import zbar.misc
 import sys, os
 import hashlib
 from time import sleep
+from io import BytesIO
 from datetime import datetime
 from picamera import PiCamera
 from PIL import Image
@@ -33,7 +34,6 @@ def main():
         for file in sys.argv:
             if "scanner.py" in file:
                 continue
-            print(file)
             scan(file)
     else:
         camera = PiCamera()
@@ -43,10 +43,12 @@ def main():
         sleep(2)
         while True:
             sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
-            out = tmpdir + '/picam.' + sha256 + '.jpg'
+            #out = tmpdir + '/picam.' + sha256 + '.jpg'
             print('capturing...')
-            camera.capture(out)
-            scan(out)
+            stream = BytesIO()
+            camera.capture(stream, format='jpeg')
+            stream.seek(0)
+            scan(stream)
 
 
 if __name__ == '__main__':
