@@ -2,7 +2,6 @@ import zbar.misc
 import sys, os
 import hashlib
 from time import sleep
-from io import BytesIO
 from datetime import datetime
 from picamera import PiCamera
 from PIL import Image
@@ -10,17 +9,8 @@ import numpy as np
 
 tmpdir = '/tmp/picam'
 
-def scan(file):
-    imagefile = Image.open(file)
-    print('opening file')
-    data = imagefile.getdata()
-    print('building numpy array')
-    image = np.array(data, np.uint8)
-    print('reshaping ')
-    image = image.reshape(imagefile.size[1], imagefile.size[0], 3)
-    if len(image.shape) == 3:
-        image = zbar.misc.rgb2gray(image)
-        print('grayscale')
+def scan(image):
+    image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
     results = scanner.scan(image)
     print('count of results: ' + str(len(results)))
@@ -37,7 +27,14 @@ def main():
         for file in sys.argv:
             if "scanner.py" in file:
                 continue
-            scan(file)
+            imagefile = Image.open(file)
+            print('opening file')
+            data = imagefile.getdata()
+            print('building numpy array')
+            image = np.array(data, np.uint8)
+            print('reshaping ')
+            image = image.reshape(imagefile.size[1], imagefile.size[0], 3)
+            scan(image)
     else:
         camera = PiCamera()
         camera.resolution = (1024, 768)
@@ -48,9 +45,8 @@ def main():
             sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
             #out = tmpdir + '/picam.' + sha256 + '.jpg'
             print('capturing...')
-            stream = BytesIO()
-            camera.capture(stream, format='jpeg', resize=(320,240))
-            stream.seek(0)
+            stream = np.empty((240, 320, 3), dtype=np.uint8)
+            camera.capture(stream, format='rgb', resize=(320,240))
             scan(stream)
 
 
