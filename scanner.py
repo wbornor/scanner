@@ -68,7 +68,9 @@ def main():
             image = np.array(data, np.uint8)
             print('reshaping ')
             image = image.reshape(imagefile.size[1], imagefile.size[0], 3)
-            scan(image)
+            upc = scan(image)
+            if upc is not None:
+                publish(upc)
     else:
         camera = PiCamera()
         camera.resolution = (1024, 768)
