@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import zbar.misc
 import sys, os
 import hashlib
@@ -38,7 +40,7 @@ def scan(image):
 
 
 def publish(upc):
-    print("*** publish " + upc)
+    print("publish: " + upc)
     client = boto3.Session(profile_name='default').client('sns')
 
     response = client.publish(
@@ -46,6 +48,7 @@ def publish(upc):
         Message=upc,
         Subject='upc-capture'
     )
+    print('publish response: ' + response)
 
 
 def main():
@@ -79,11 +82,11 @@ def main():
             upc = scan(stream)
             if upc is not None:
                 if upc in codes:
-                    #subtract the time, if more than n seconds since last seen, act again
+                    # subtract the time, if more than n seconds since last seen time, publish again
                     now = datetime.now()
                     then = codes[upc]
                     if (now - then).total_seconds() >= __last_seen_seconds__:
-                        codes[upc] = datetime.now()
+                        codes[upc] = now
                         publish(upc)
                 else:
                     codes[upc] = datetime.now()
