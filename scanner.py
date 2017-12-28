@@ -40,12 +40,13 @@ def scan(image):
 
 
 def publish(upc):
-    print("publish: " + upc)
+    msg = json.dumps({'upc-a': upc})
+    print("publish: " + msg)
     client = boto3.Session(profile_name='default').client('sns')
 
     response = client.publish(
         TopicArn=__sns_topic_arn__,
-        Message=json.dumps({'upc': upc}),
+        Message=msg,
         Subject='upc-capture'
     )
     print('publish response: ' + str(response))
