@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import zbar.misc
-import sys, os
+import sys, os, json
 import hashlib
 from time import sleep
 from datetime import datetime
@@ -45,7 +45,7 @@ def publish(upc):
 
     response = client.publish(
         TopicArn=__sns_topic_arn__,
-        Message=upc,
+        Message=json.dumps({'upc': upc}),
         Subject='upc-capture'
     )
     print('publish response: ' + str(response))
