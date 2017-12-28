@@ -72,6 +72,7 @@ def main():
     else:
         camera = PiCamera()
         camera.resolution = (1024, 768)
+        camera.color_effects = (128, 128)  # turn camera to black and white
         camera.start_preview()
         # Camera warm-up time
         sleep(2)
