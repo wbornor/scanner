@@ -53,6 +53,7 @@ def publish(upc):
 
 def main():
     # set up GPIO output channel
+    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(16, GPIO.OUT)
     codes = {}
