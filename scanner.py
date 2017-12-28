@@ -48,7 +48,7 @@ def publish(upc):
         Message=upc,
         Subject='upc-capture'
     )
-    print('publish response: ' + response)
+    print('publish response: ' + str(response))
 
 
 def main():
