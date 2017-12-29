@@ -40,7 +40,7 @@ def scan(image):
 
 
 def publish(upc):
-    msg = json.dumps({'upc_a': upc, 'default': upc})
+    msg = json.dumps({'default': {'upc_a': upc}})
     print("publish: " + msg)
     client = boto3.Session(profile_name='default').client('sns')
 
