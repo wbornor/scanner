@@ -46,6 +46,7 @@ def publish(upc):
 
     response = client.publish(
         TopicArn=__sns_topic_arn__,
+        MessageStructure='json',
         Message=msg,
         Subject='upc-capture'
     )
