@@ -65,6 +65,7 @@ def main():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(16, GPIO.OUT)
+    GPIO.setup(22, GPIO.OUT)
     codes = {}
 
     if len(sys.argv) >= 2:
