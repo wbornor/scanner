@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
 import zbar.misc
-import sys, os, json
-import hashlib
+import sys, json
 from time import sleep
 from datetime import datetime
 from picamera import PiCamera
@@ -25,6 +24,12 @@ def ledoff():
     GPIO.output(16, GPIO.HIGH)
 
 
+def chirp():
+    GPIO.output(22, GPIO.HIGH)
+    sleep(0.2)
+    GPIO.output(22, GPIO.LOW)
+
+
 def scan(image):
     image = zbar.misc.rgb2gray(image)
     scanner = zbar.Scanner()
@@ -34,9 +39,10 @@ def scan(image):
         return None
     for result in results:
         if result.type == 'UPC-A':
-            print(result.data, zbar.misc.upca_is_valid(result.data.decode('ascii')), result.quality)
+            upca = result.data.decode('ascii')
+            print(result.data, zbar.misc.upca_is_valid(upca), result.quality)
             ledon()
-            return result.data.decode('ascii')
+            return upca
 
 
 def publish(upc):
@@ -83,9 +89,9 @@ def main():
         # Camera warm-up time
         sleep(2)
         while True:
-            #sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
+            # sha256 = hashlib.sha256(str(datetime.now()).encode('utf-8')).hexdigest()
             stream = np.empty((240, 320, 3), dtype=np.uint8)
-            camera.capture(stream, format='rgb', resize=(320,240))
+            camera.capture(stream, format='rgb', resize=(320, 240))
             upc = scan(stream)
             if upc is not None:
                 if upc in codes:
