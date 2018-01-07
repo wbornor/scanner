@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#http://www.linuxcircle.com/2015/04/12/how-to-play-piezo-buzzer-tunes-on-raspberry-pi-gpio-with-pwm/
+# http://www.linuxcircle.com/2015/04/12/how-to-play-piezo-buzzer-tunes-on-raspberry-pi-gpio-with-pwm/
 
 import RPi.GPIO as GPIO  # import the GPIO library
 import time  # import the time library
