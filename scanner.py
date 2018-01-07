@@ -12,22 +12,34 @@ import boto3
 
 __last_seen_seconds__ = 30
 __sns_topic_arn__ = 'arn:aws:sns:us-east-1:796019718156:upc-capture'
-
+__led_pin__ = 16
+__piezo_pin__ = 22
 
 def ledon():
     # On
-    GPIO.output(16, GPIO.LOW)
+    GPIO.output(__led_pin__, GPIO.LOW)
 
 
 def ledoff():
     # On
-    GPIO.output(16, GPIO.HIGH)
+    GPIO.output(__led_pin__, GPIO.HIGH)
 
 
-def chirp():
-    GPIO.output(22, GPIO.HIGH)
-    sleep(0.2)
-    GPIO.output(22, GPIO.LOW)
+# http://www.linuxcircle.com/2015/04/12/how-to-play-piezo-buzzer-tunes-on-raspberry-pi-gpio-with-pwm/
+def chirp(pitch, duration):  # create the function "buzz" and feed it the pitch and duration)
+
+    if (pitch == 0):
+        sleep(duration)
+        return
+    period = 1.0 / pitch  # in physics, the period (sec/cyc) is the inverse of the frequency (cyc/sec)
+    delay = period / 2  # calcuate the time for half of the wave
+    cycles = int(duration * pitch)  # the number of waves to produce is the duration times the frequency
+
+    for i in range(cycles):  # start a loop from 0 to the variable "cycles" calculated above
+        GPIO.output(__piezo_pin__, GPIO.HIGH)
+        sleep(delay)
+        GPIO.output(__piezo_pin__, GPIO.LOW)
+        sleep(delay)
 
 
 def scan(image):
@@ -42,6 +54,7 @@ def scan(image):
             upca = result.data.decode('ascii')
             print(result.data, zbar.misc.upca_is_valid(upca), result.quality)
             ledon()
+            chirp(500, 0.2)
             return upca
 
 
@@ -64,8 +77,8 @@ def main():
     # set up GPIO output channel
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(16, GPIO.OUT)
-    GPIO.setup(22, GPIO.OUT)
+    GPIO.setup(__led_pin__, GPIO.OUT)
+    GPIO.setup(__piezo_pin__, GPIO.OUT)
     codes = {}
 
     if len(sys.argv) >= 2:
